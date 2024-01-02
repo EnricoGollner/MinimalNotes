@@ -12,7 +12,7 @@ void main() async {
   runApp(
     MultiProvider(
     providers: [
-      // ChangeNotifierProvider(create: (_) => NotesRepository()),
+      ChangeNotifierProvider(create: (_) => NotesRepository()),
       ChangeNotifierProvider(create: (_) => ThemeProvider())
     ],
     child: const MainApp(),

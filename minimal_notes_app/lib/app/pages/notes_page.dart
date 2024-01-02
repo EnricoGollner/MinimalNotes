@@ -5,6 +5,8 @@ import 'package:minimal_notes_app/app/models/note_repository.dart';
 import 'package:minimal_notes_app/app/shared/components/custom_alert_dialog.dart';
 import 'package:minimal_notes_app/app/shared/components/custom_drawer.dart';
 import 'package:minimal_notes_app/app/shared/components/note_tile.dart';
+import 'package:minimal_notes_app/app/shared/theme/app_colors.dart';
+import 'package:minimal_notes_app/app/shared/validators/validators.dart';
 import 'package:provider/provider.dart';
 
 class NotesPage extends StatefulWidget {
@@ -16,6 +18,8 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   final TextEditingController _newNoteController = TextEditingController();
+  final FocusNode _newNoteFocus = FocusNode();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -77,21 +81,36 @@ class _NotesPageState extends State<NotesPage> {
 
   void _createNote() {
     showDialog(
-      context: context,
-      builder: (context) => CustomAlertDialog(
-        title: 'New Note',
-        content: TextField(
-        controller: _newNoteController,
-        keyboardType: TextInputType.multiline,
-      ),
-        confirmationTitle: 'Create',
-        onConfirmationPressed: () {
-          context.read<NotesRepository>().addNote(_newNoteController.text);
-          _newNoteController.clear();
-          Navigator.pop(context);
-        },
-      ),
-    );
+        context: context,
+        builder: (context) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(_newNoteFocus);
+          });
+
+          return CustomAlertDialog(
+            title: 'New Note',
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                validator: Validators.isRequired,
+                controller: _newNoteController,
+                focusNode: _newNoteFocus,
+                decoration: const InputDecoration(hintText: 'Write your note here...'),
+                cursorColor: colorInversePrimaryDark,
+                keyboardType: TextInputType.multiline,
+                maxLines: 2,
+              ),
+            ),
+            confirmationTitle: 'Create',
+            onConfirmationPressed: () {
+              if (_formKey.currentState?.validate() ?? false) {
+                context.read<NotesRepository>().addNote(_newNoteController.text);
+                _newNoteController.clear();
+                Navigator.pop(context);
+              }
+            },
+          );
+        });
   }
 
   void _readNotes() {
@@ -103,15 +122,30 @@ class _NotesPageState extends State<NotesPage> {
 
     showDialog(
       context: context,
-      builder: (context) => CustomAlertDialog(
-        content: TextFormField(controller: _newNoteController,),
-        confirmationTitle: 'Update',
-        onConfirmationPressed: () {
-          context.read<NotesRepository>().updateNote(id: note.id, edittedText: _newNoteController.text);
-          _newNoteController.clear();
-          Navigator.pop(context);
-        },
-      ),
+      builder: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(_newNoteFocus);
+        });
+
+        return CustomAlertDialog(
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              validator: Validators.isRequired,
+              controller: _newNoteController,
+              focusNode: _newNoteFocus,
+            ),
+          ),
+          confirmationTitle: 'Update',
+          onConfirmationPressed: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              context.read<NotesRepository>().updateNote(id: note.id, edittedText: _newNoteController.text);
+              _newNoteController.clear();
+              Navigator.pop(context);
+            }
+          },
+        );
+      },
     );
   }
 
