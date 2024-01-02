@@ -3,7 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:minimal_notes_app/app/models/note.dart';
 import 'package:path_provider/path_provider.dart';
 
-class NoteRepository extends ChangeNotifier {
+class NotesRepository extends ChangeNotifier {
   static late Isar isar;
 
   // Initializing Database()
