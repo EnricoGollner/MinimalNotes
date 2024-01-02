@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:minimal_notes_app/app/theme/theme.dart';
+import 'package:minimal_notes_app/app/shared/theme/theme.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeData _themeData = lightMode;
@@ -14,6 +14,6 @@ class ThemeProvider with ChangeNotifier {
   }
   
   void toggleTheme() {
-    _themeData = _themeData == lightMode ? darkMode : lightMode;
+    themeData = _themeData == lightMode ? darkMode : lightMode;  // using setter of theme data that notifies listenners
   }
 }

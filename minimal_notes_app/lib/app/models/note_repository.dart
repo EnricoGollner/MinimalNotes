@@ -21,17 +21,16 @@ class NotesRepository extends ChangeNotifier {
 
     await isar.writeTxn(() => isar.notes.put(newNote));
     await fetchNotes();
-    notifyListeners();
   }
 
   // Read
-  Future<List<Note>> fetchNotes() async {
+  Future<void> fetchNotes() async {
     List<Note> fetchedNotes = await isar.notes.where().findAll();
-    // Updating object
+
     currentNotes.clear();
     currentNotes.addAll(fetchedNotes);
-
-    return fetchedNotes;
+    
+    notifyListeners();
   }
 
   // Update
@@ -46,7 +45,7 @@ class NotesRepository extends ChangeNotifier {
   }
 
   // Delete
-  Future<void> deleteNote({required int id}) async {
+  Future<void> deleteNote(int id) async {
     await isar.writeTxn(() => isar.notes.delete(id));
     await fetchNotes();
   }

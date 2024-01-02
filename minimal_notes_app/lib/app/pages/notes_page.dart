@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minimal_notes_app/app/models/note.dart';
 import 'package:minimal_notes_app/app/models/note_repository.dart';
+import 'package:minimal_notes_app/app/shared/components/custom_alert_dialog.dart';
+import 'package:minimal_notes_app/app/shared/components/custom_drawer.dart';
+import 'package:minimal_notes_app/app/shared/components/note_tile.dart';
 import 'package:provider/provider.dart';
 
 class NotesPage extends StatefulWidget {
@@ -16,7 +19,7 @@ class _NotesPageState extends State<NotesPage> {
 
   @override
   void initState() {
-    readNotes();
+    _readNotes();
     super.initState();
   }
 
@@ -26,104 +29,93 @@ class _NotesPageState extends State<NotesPage> {
     List<Note> notesList = notesRepository.currentNotes;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      drawer: const CustomDrawer(),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.only(left: 25),
             child: Text(
               'Notes',
               style: GoogleFonts.dmSerifText(
-                  fontSize: 48,
-                  color: Theme.of(context).colorScheme.inversePrimary,),
+                fontSize: 48,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
           ),
-
           Expanded(
             child: ListView.builder(
               itemCount: notesList.length,
               itemBuilder: (context, index) {
-              final note = notesList[index];
-            
-                return ListTile(
-                  title: Text(note.text),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () => updateNote(note),
-                        icon: const Icon(Icons.edit),
-                      ),
-                      IconButton(
-                        onPressed: () => deleteNote(note.id),
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
-                  ),
+                final note = notesList[index];
+                return NoteTile(
+                  text: note.text,
+                  onEditPressed: () => _updateNote(note),
+                  onDeletePressed: () => _deleteNote(note.id),
                 );
-            },),
+              },
+            ),
           ),
         ],
       ),
-
       floatingActionButton: FloatingActionButton(
-        onPressed: createNote,
-        child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        onPressed: _createNote,
+        child: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
       ),
     );
   }
 
-  void createNote() {
+  void _createNote() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => CustomAlertDialog(
+        title: 'New Note',
         content: TextField(
-          controller: _newNoteController,
-        ),
-        actions: [
-          MaterialButton(
-            onPressed: (){
-              context.read<NotesRepository>().addNote(_newNoteController.text);
-              _newNoteController.clear();
-              Navigator.pop(context);
-            },
-            child: const Text('Create'),
-          )
-        ],
+        controller: _newNoteController,
+        keyboardType: TextInputType.multiline,
+      ),
+        confirmationTitle: 'Create',
+        onConfirmationPressed: () {
+          context.read<NotesRepository>().addNote(_newNoteController.text);
+          _newNoteController.clear();
+          Navigator.pop(context);
+        },
       ),
     );
   }
 
-  void readNotes() {
+  void _readNotes() {
     context.read<NotesRepository>().fetchNotes();
   }
 
-  void updateNote(Note note) {
+  void _updateNote(Note note) {
     _newNoteController.text = note.text;
 
-    showDialog(context: context, builder: (context) => AlertDialog(
-      title: const Text('Update Note'),
-        content: TextField(
-          controller: _newNoteController,
-        ),
-        actions: [
-          MaterialButton(
-            onPressed: (){
-              context.read<NotesRepository>().updateNote(id: note.id, edittedText: _newNoteController.text);
-              _newNoteController.clear();
-              Navigator.pop(context);
-            },
-            child: const Text('Update'),
-          )
-        ],
+    showDialog(
+      context: context,
+      builder: (context) => CustomAlertDialog(
+        content: TextFormField(controller: _newNoteController,),
+        confirmationTitle: 'Update',
+        onConfirmationPressed: () {
+          context.read<NotesRepository>().updateNote(id: note.id, edittedText: _newNoteController.text);
+          _newNoteController.clear();
+          Navigator.pop(context);
+        },
       ),
     );
   }
 
-  void deleteNote(int id) {
-    context.read<NotesRepository>().deleteNote(id: id);
+  void _deleteNote(int id) {
+    context.read<NotesRepository>().deleteNote(id);
   }
 }
