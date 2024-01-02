@@ -6,7 +6,7 @@ import 'package:minimal_notes_app/app/shared/components/custom_alert_dialog.dart
 import 'package:minimal_notes_app/app/shared/components/custom_drawer.dart';
 import 'package:minimal_notes_app/app/shared/components/note_tile.dart';
 import 'package:minimal_notes_app/app/shared/theme/app_colors.dart';
-import 'package:minimal_notes_app/app/shared/validators/validators.dart';
+import 'package:minimal_notes_app/app/shared/util/validator.dart';
 import 'package:provider/provider.dart';
 
 class NotesPage extends StatefulWidget {
@@ -92,7 +92,7 @@ class _NotesPageState extends State<NotesPage> {
             content: Form(
               key: _formKey,
               child: TextFormField(
-                validator: Validators.isRequired,
+                validator: Validator.isRequired,
                 controller: _newNoteController,
                 focusNode: _newNoteFocus,
                 decoration: const InputDecoration(hintText: 'Write your note here...'),
@@ -131,7 +131,7 @@ class _NotesPageState extends State<NotesPage> {
           content: Form(
             key: _formKey,
             child: TextFormField(
-              validator: Validators.isRequired,
+              validator: Validator.isRequired,
               controller: _newNoteController,
               focusNode: _newNoteFocus,
             ),
