@@ -18,7 +18,6 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   final TextEditingController _newNoteController = TextEditingController();
-  final FocusNode _newNoteFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -83,9 +82,6 @@ class _NotesPageState extends State<NotesPage> {
     showDialog(
         context: context,
         builder: (context) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            FocusScope.of(context).requestFocus(_newNoteFocus);
-          });
 
           return CustomAlertDialog(
             title: 'New Note',
@@ -94,7 +90,7 @@ class _NotesPageState extends State<NotesPage> {
               child: TextFormField(
                 validator: Validator.isRequired,
                 controller: _newNoteController,
-                focusNode: _newNoteFocus,
+                autofocus: true,
                 decoration: const InputDecoration(hintText: 'Write your note here...'),
                 cursorColor: colorInversePrimaryDark,
                 keyboardType: TextInputType.multiline,
@@ -123,9 +119,6 @@ class _NotesPageState extends State<NotesPage> {
     showDialog(
       context: context,
       builder: (context) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(_newNoteFocus);
-        });
 
         return CustomAlertDialog(
           content: Form(
@@ -133,7 +126,7 @@ class _NotesPageState extends State<NotesPage> {
             child: TextFormField(
               validator: Validator.isRequired,
               controller: _newNoteController,
-              focusNode: _newNoteFocus,
+              autofocus: true,
             ),
           ),
           confirmationTitle: 'Update',
