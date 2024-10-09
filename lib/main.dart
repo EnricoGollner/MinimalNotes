@@ -4,7 +4,7 @@ import 'package:minimal_notes_app/app/shared/theme/theme_provider.dart';
 import 'package:minimal_notes_app/main_app.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
+Future<void> main() async {
   // Initializing note Isar Database
   WidgetsFlutterBinding.ensureInitialized();
   await NotesRepository.initialize();

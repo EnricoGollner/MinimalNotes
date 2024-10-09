@@ -22,7 +22,10 @@ class _NotesPageState extends State<NotesPage> {
 
   @override
   void initState() {
-    _readNotes();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _readNotes();
+    });
+
     super.initState();
   }
 
@@ -32,7 +35,7 @@ class _NotesPageState extends State<NotesPage> {
     List<Note> notesList = notesRepository.currentNotes;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -109,8 +112,8 @@ class _NotesPageState extends State<NotesPage> {
         });
   }
 
-  void _readNotes() {
-    context.read<NotesRepository>().fetchNotes();
+  Future<void> _readNotes() async {
+    await context.read<NotesRepository>().getNotes();
   }
 
   void _updateNote(Note note) {

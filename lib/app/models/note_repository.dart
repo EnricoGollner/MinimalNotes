@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:minimal_notes_app/app/models/note.dart';
@@ -8,7 +10,7 @@ class NotesRepository extends ChangeNotifier {
 
   // Initializing Database()
   static Future<void> initialize() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final Directory dir = await getApplicationDocumentsDirectory();
     isar = await Isar.open([NoteSchema], directory: dir.path);
   }
 
@@ -17,19 +19,17 @@ class NotesRepository extends ChangeNotifier {
 
   // Create
   Future<void> addNote(String typedText) async {
-    final newNote = Note()..text = typedText;
-
+    final Note newNote = Note()..text = typedText;
     await isar.writeTxn(() => isar.notes.put(newNote));
-    await fetchNotes();
+    await getNotes();
   }
 
   // Read
-  Future<void> fetchNotes() async {
-    List<Note> fetchedNotes = await isar.notes.where().findAll();
+  Future<void> getNotes() async {
+    List<Note> getNotes = await isar.notes.where().findAll();
 
     currentNotes.clear();
-    currentNotes.addAll(fetchedNotes);
-    
+    currentNotes.addAll(getNotes);
     notifyListeners();
   }
 
@@ -40,13 +40,13 @@ class NotesRepository extends ChangeNotifier {
     if (existingNote != null) {
       existingNote.text = edittedText;
       await isar.writeTxn(() => isar.notes.put(existingNote));
-      await fetchNotes();
+      await getNotes();
     }
   }
 
   // Delete
   Future<void> deleteNote(int id) async {
     await isar.writeTxn(() => isar.notes.delete(id));
-    await fetchNotes();
+    await getNotes();
   }
 }

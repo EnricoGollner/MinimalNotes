@@ -17,7 +17,7 @@ class CustomAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       title: title != null
           ? Text(title!, style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary))
           : null,

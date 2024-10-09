@@ -5,7 +5,7 @@ ThemeData lightMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
-    background: colorBackgroundLight,
+    surface: colorBackgroundLight,
     primary: colorPrimaryLight,
     secondary: colorSecondaryLight,
     inversePrimary: colorInversePrimaryLight
@@ -16,7 +16,7 @@ ThemeData darkMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
-    background: colorBackgroundDark,
+    surface: colorBackgroundDark,
     primary: colorPrimaryDark,
     secondary: colorSecondaryDark,
     inversePrimary: colorInversePrimaryDark,
